@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+
+  taodev-nginx:
+    image: nginx:1.21.6-alpine
+    container_name: taodev-nginx
+    restart: always
+    networks:
+      - taodev-net
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./taodev.conf:/etc/nginx/conf.d/taodev.conf
+      - ./taodev-certbot/conf:/etc/letsencrypt
+      - ./taodev-certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'while :; do sleep 6h; nginx -s reload; done & nginx -g \"daemon off;\"'"
+
+  taodev-certbot:
+    image: certbot/certbot:v1.29.0
+    container_name: taodev-certbot
+    restart: always
+    networks:
+      - taodev-net
+    volumes:
+      - ./taodev-certbot/conf:/etc/letsencrypt
+      - ./taodev-certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'while :; do certbot renew; sleep 12h; done'"
+
+
+networks:
+  taodev-net:
+    driver: bridge
+    name: cert-net
