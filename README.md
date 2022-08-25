@@ -27,3 +27,7 @@ Then access your domain using a browser, it'll show the google site..
 > ```text
 > PLEASE MAKE SURE YOUR MACHINE IS NOT USING PORTS 80 AND 443 WHEN YOU RUN THE COMMAND
 > ```
+
+After cert generated, use command: `$ make down` to turn shutdown the containers.
+Generated cert stored at `taodev-certbot` directory.
+

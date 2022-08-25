@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  nginx:
+    container_name: nginx
+    image: nginx:1.23.0-alpine
+    restart: always
+    networks:
+      - taodev-net
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - TZ=Asia/Jakarta
+    volumes:
+      - "./taodev-certbot:/taodev-certbot"
+      - "./nginx.conf:/etc/nginx/nginx.conf"
+      - "./default-nginx.conf:/etc/nginx/conf.d/default-nginx.conf"
+  
+  certbot-engine:
+    container_name: certbot-engine
+    image: certbot/certbot:v1.29.0
+    restart: always
+    networks:
+      - taodev-net
+    volumes:
+      - "./taodev-certbot/conf:/etc/letsencrypt"
+      - "./taodev-certbot/www:/var/www/certbot"
+    entrypoint: "/bin/sh -c 'while :; do certbot renew; sleep 12h; done'"
+
+networks:
+  taodev-net:
+    external: true
